@@ -18,4 +18,5 @@ public class Rechteck extends Form{
         this.hoehe = hoehe;
         this.farbe = farbe;
     }
+
 }
