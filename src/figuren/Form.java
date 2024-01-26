@@ -1,4 +1,5 @@
 package figuren;
 
-public class Form {
+public interface Form {
+    public void move(int[] direction);
 }
