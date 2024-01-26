@@ -11,8 +11,7 @@ public class Test {
 
 
     static Leinwand leinwand = new Leinwand("Leinwand", 600, 500);
-    static int boundaryX = leinwand.getLeinwandBreite();
-    static int boundaryY = leinwand.getLeinwandHoehe();
+
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -53,8 +52,9 @@ public class Test {
             kreis.move(direction);
         }
     }
-
     private static String checkForBoundary(Kreis kreis) {
+        int boundaryX = leinwand.getLeinwandBreite();
+        int boundaryY = leinwand.getLeinwandHoehe();
 
         if (kreis.positionX - kreis.radius <= 0) {
             return "left";
@@ -68,7 +68,7 @@ public class Test {
             return "up";
         }
 
-        if (kreis.positionY - kreis.radius >= boundaryY) {
+        if (kreis.positionY + kreis.radius >= boundaryY) {
             return "down";
         }
         return null;
