@@ -1,105 +1,77 @@
 package figuren;
 import ack.shapes.Leinwand;
 
-import java.sql.Time;
 import java.util.*;
 
 public class Test {
     static Map<Integer, Form> formenListe =  new HashMap<Integer, Form>();
     static Map<Integer, List<Form>> dreieckListe = new HashMap();
-
     public static Integer objectIndexer = 0;
 
+
+
     static Leinwand leinwand = new Leinwand("Leinwand", 600, 500);
+    static int boundaryX = leinwand.getLeinwandBreite();
+    static int boundaryY = leinwand.getLeinwandHoehe();
 
     public static void main(String[] args) throws InterruptedException {
-
-        boolean loop = false;
-        while (loop){
-            System.out.println("Was willst du zeichen? rechteck[1]/kreis[2]");
-            int decision = new Scanner(System.in).nextInt();
-            switch (decision){
-                case 1 -> drawRechteck();
-                case 2 -> drawKreis();
-                case 3 -> deleteFromCanvas();
-                case 4 -> drawDreieck();
-            }
-        }
 
         Kreis kreis = new Kreis(30, 30, 10, "rot");
         animate(kreis);
 
+
+//        boolean loop = false;
+//        while (loop){
+//            System.out.println("Was willst du zeichen? rechteck[1]/kreis[2]");
+//            int decision = new Scanner(System.in).nextInt();
+//            switch (decision){
+//                case 1 -> drawRechteck();
+//                case 2 -> drawKreis();
+//                case 3 -> deleteFromCanvas();
+//                case 4 -> drawDreieck();
+//            }
+//        }
+
+
     }
 
     public static void animate(Kreis kreis) throws InterruptedException {
-        int boundaryX = leinwand.getLeinwandBreite();
-        int boundaryY = leinwand.getLeinwandHoehe();
-        int[] direction = randomDirection();
+        int[] direction = new int[] {6, 8};
 
         while (true) {
             leinwand.zeichne(kreis);
             Thread.sleep(20);
 
-
-            if (isTouchingBoundary(kreis)) {
-                direction = randomDirection();
-                if (kreis.positionX - kreis.radius <= 0) {
-                    direction[0] = ensurePositive(direction[0]);
-                }
-
-                if (kreis.positionX + kreis.radius >= boundaryX) {
-                    direction[0] = ensureNegative(direction[0]);
-                }
-
-                if (kreis.positionY - kreis.radius <= 0) {
-                    direction[1] = ensurePositive(direction[1]);
-                }
-
-                if (kreis.positionY - kreis.radius >= boundaryY) {
-                    direction[1] = ensureNegative(direction[1]);
-                }
+            switch (checkForBoundary(kreis)) {
+                case "left" -> direction[0] = Math.abs(direction[0]);
+                case "right" -> direction[0] = Math.abs(direction[0]) * -1;
+                case "up" -> direction[1] = Math.abs(direction[1]);
+                case "down" -> direction[1] = Math.abs(direction[1]) * -1;
+                case null, default -> {}
             }
+
             kreis.move(direction);
         }
     }
 
-    private static boolean isTouchingBoundary (Kreis kreis) {
-        int boundaryX = leinwand.getLeinwandBreite();
-        int boundaryY = leinwand.getLeinwandHoehe();
+    private static String checkForBoundary(Kreis kreis) {
 
         if (kreis.positionX - kreis.radius <= 0) {
-            return true;
+            return "left";
         }
 
         if (kreis.positionX + kreis.radius >= boundaryX) {
-            return true;
+            return "right";
         }
 
         if (kreis.positionY - kreis.radius <= 0) {
-            return true;
+            return "up";
         }
 
         if (kreis.positionY - kreis.radius >= boundaryY) {
-            return true;
+            return "down";
         }
-        return false;
-    }
-
-    private static int ensurePositive(int input) {
-        if (input >= 0) return input;
-        else return input * -1;
-    }
-    private static int ensureNegative(int input) {
-        if (input <= 0) return input;
-        else return input * -1;
-    }
-
-    private static int[] randomDirection() {
-        Random random = new Random();
-        int[] direction = new int[2];
-        direction[0] = random.nextInt(9) - 4;
-        direction[1] = random.nextInt(9) - 4;
-        return direction;
+        return null;
     }
 
     public static void drawRechteck(){
