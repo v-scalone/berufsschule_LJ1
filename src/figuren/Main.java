@@ -1,13 +1,12 @@
 package figuren;
 import ack.shapes.Leinwand;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
 import static java.lang.Math.sqrt;
 
-public class Test {
+public class Main {
     static Map<Integer, Form> formenListe =  new HashMap<Integer, Form>();
     static Map<Integer, List<Form>> dreieckListe = new HashMap();
     public static Integer objectIndexer = 0;
@@ -16,22 +15,16 @@ public class Test {
 
 
     static Leinwand leinwand = new Leinwand("Leinwand", 600, 900);
-
-    static Rechteck trunk = new Rechteck(263, 450, 75, 450, "braun");
-    static Kreis leaves = new Kreis(300, 400, 100, "gruen");
+    static int[] middle = new int[] {(int) (leinwand.getLeinwandBreite() * 0.5), (int) (leinwand.getLeinwandHoehe()* 0.5)};
 
 
     public static void main(String[] args) throws InterruptedException {
 
-        //Kreis kreis = new Kreis(30, 30, 10, "rot");
-        //animate(kreis);
+        //animate(new Kreis(30, 30, 10, "rot"));
 
-
-
-        //leinwand.zeichne(new Kreis(middle[0], middle[1], 5, "schwarz" ));
-
-        Kreis sonne = new Kreis(0, 450, 60, "gelb");
-        kreisBewegung(sonne);
+        kreisBewegung(new Kreis(0, 450, 60, "gelb"),
+                List.of(new Rechteck(263, 550, 75, 350, "braun"),
+                        new Kreis(300, 500, 100, "gruen")));
 
 
     }
@@ -55,64 +48,64 @@ public class Test {
         }
     }
 
-    private static void kreisBewegung(Kreis kreis) throws InterruptedException {
-        boolean isNight = false;
-        int[] middle = new int[] {(int) (leinwand.getLeinwandBreite() * 0.5), (int) (leinwand.getLeinwandHoehe()* 0.5)};
+    private static void kreisBewegung(Kreis kreis, List<Form> scenery) throws InterruptedException {
+        boolean isDay = true;
 
-        double angleInDeg = 180;
+        final double START_ANGLE = 214;
+        double angleInDeg = START_ANGLE;
+
         int radius = (int) sqrt(Math.pow((kreis.positionX - middle[0]), 2.0) + Math.pow((kreis.positionY - middle[1]), 2));
 
         Rechteck bgRectangle = new Rechteck(-10, -10, 1000, 1000, "weiß");
-
         Kreis abgebissen = new Kreis(0, 450, 60, "schwarz");
 
         while (true) {
-            leinwand.zeichne(trunk);
-            leinwand.zeichne(leaves);
+            // redraw all shapes
+            leinwand.zeichne(bgRectangle);
             leinwand.zeichne(kreis);
-            if (isNight) leinwand.zeichne(abgebissen);
+            if (!isDay) leinwand.zeichne(abgebissen);
+            scenery.forEach(leinwand::zeichne);
 
+            // increment angle and move sun / moon
             angleInDeg += 1;
-            int[] cords = getNewCordsFromAngle(Math.toRadians(angleInDeg), radius);
-            int xMove = cords[0] - kreis.positionX;
-            int yMove = cords[1] - kreis.positionY;
+            moveToPoint(kreis, getPointFromAngleAndRadius(Math.toRadians(angleInDeg), radius));
+            moveToPoint(abgebissen, new int[] {kreis.positionX - 40, kreis.positionY});
 
-            int[] direction = new int[]{xMove, yMove};
-            kreis.move(direction);
-
-            int xMoveAbgebissen = kreis.positionX - abgebissen.positionX - 30;
-            int yMoveAbgebissen = kreis.positionY - abgebissen.positionY;
-            int[] directionAbgebissen = new int[]{xMoveAbgebissen, yMoveAbgebissen};
-            abgebissen.move(directionAbgebissen);
-
-            if (Objects.equals(checkForBoundary(kreis), "right") && !isNight) {
+            // check if circle touches right border and switch between day or night; reset circle to left
+            if (Objects.equals(checkForBoundary(kreis), "right") && isDay) {
                 bgRectangle.farbe = "schwarz";
                 kreis.farbe = "weiss";
-                isNight = true;
-                angleInDeg = 180;
-                leinwand.zeichne(bgRectangle);
-            } else if (Objects.equals(checkForBoundary(kreis), "right") && isNight) {
+                isDay = false;
+                angleInDeg = START_ANGLE;
+            } else if (Objects.equals(checkForBoundary(kreis), "right") && !isDay) {
                 bgRectangle.farbe = "weiss";
                 kreis.farbe = "gelb";
-                isNight = false;
-                angleInDeg = 180;
-                leinwand.zeichne(bgRectangle);
+                isDay = true;
+                angleInDeg = START_ANGLE;
             }
+
             leinwand.warte(10);
         }
 
     }
 
-    private static int[] getNewCordsFromAngle(double angle, int radius) {
+    private static void moveToPoint (Kreis kreis, int[] point) {
+        int xMove = point[0] - kreis.positionX;
+        int yMove = point[1] - kreis.positionY;
+
+        kreis.move(new int[]{xMove, yMove});
+    }
+
+    private static int[] getPointFromAngleAndRadius(double angle, int radius) {
         int[] middle = new int[] {(int) (leinwand.getLeinwandBreite() * 0.5), (int) (leinwand.getLeinwandHoehe()* 0.5)};
 
         double sin = Math.sin(angle);
-        double yCoord = sin * radius + middle[1];
+        double yCoordinate = sin * radius + middle[1];
 
         double cos = Math.cos(angle);
-        double xCoord = cos * radius + middle[0];
+        double xCoordinate = cos * radius + middle[0];
 
-        return new int[] {(int) xCoord, (int) yCoord};
+        return new int[] {(int) xCoordinate, (int) yCoordinate};
     }
 
 

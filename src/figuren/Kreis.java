@@ -1,11 +1,10 @@
 package figuren;
 
-public class Kreis implements Form{
+public class Kreis extends Form{
     int positionX;
     int positionY;
-    int radius;
     String farbe;
-
+    int radius;
     public Kreis() {
         this(100,100,50,"gruen");
     }
@@ -18,9 +17,8 @@ public class Kreis implements Form{
     }
 
     public void move(int[] direction) {
-        positionX += direction[0];
-        positionY += direction[1];
+        this.positionX += direction[0];
+        this.positionY += direction[1];
     }
-
 
 }

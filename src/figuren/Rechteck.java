@@ -3,7 +3,7 @@ package figuren;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
-public class Rechteck implements Form{
+public class Rechteck extends Form{
     int positionX;
     int positionY;
     int breite;
@@ -45,8 +45,8 @@ public class Rechteck implements Form{
     }
 
     public void move(int[] direction) {
-        positionX += direction[0];
-        positionY += direction[1];
+        this.positionX += direction[0];
+        this.positionY += direction[1];
     }
 
 }

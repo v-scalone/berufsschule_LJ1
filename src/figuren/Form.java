@@ -1,5 +1,9 @@
 package figuren;
 
-public interface Form {
-    public void move(int[] direction);
+public abstract class Form {
+    int positionX;
+    int positionY;
+    String farbe;
+
+    public abstract void move(int[] direction);
 }
