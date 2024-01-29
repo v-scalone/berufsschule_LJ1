@@ -1,7 +1,11 @@
 package figuren;
 import ack.shapes.Leinwand;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
+
+import static java.lang.Math.sqrt;
 
 public class Test {
     static Map<Integer, Form> formenListe =  new HashMap<Integer, Form>();
@@ -10,26 +14,24 @@ public class Test {
 
 
 
-    static Leinwand leinwand = new Leinwand("Leinwand", 600, 500);
+
+    static Leinwand leinwand = new Leinwand("Leinwand", 600, 900);
+
+    static Rechteck trunk = new Rechteck(263, 450, 75, 450, "braun");
+    static Kreis leaves = new Kreis(300, 400, 100, "gruen");
 
 
     public static void main(String[] args) throws InterruptedException {
 
-        Kreis kreis = new Kreis(30, 30, 10, "rot");
-        animate(kreis);
+        //Kreis kreis = new Kreis(30, 30, 10, "rot");
+        //animate(kreis);
 
 
-//        boolean loop = false;
-//        while (loop){
-//            System.out.println("Was willst du zeichen? rechteck[1]/kreis[2]");
-//            int decision = new Scanner(System.in).nextInt();
-//            switch (decision){
-//                case 1 -> drawRechteck();
-//                case 2 -> drawKreis();
-//                case 3 -> deleteFromCanvas();
-//                case 4 -> drawDreieck();
-//            }
-//        }
+
+        //leinwand.zeichne(new Kreis(middle[0], middle[1], 5, "schwarz" ));
+
+        Kreis sonne = new Kreis(0, 450, 60, "gelb");
+        kreisBewegung(sonne);
 
 
     }
@@ -39,7 +41,7 @@ public class Test {
 
         while (true) {
             leinwand.zeichne(kreis);
-            Thread.sleep(20);
+            leinwand.warte(20);
 
             switch (checkForBoundary(kreis)) {
                 case "left" -> direction[0] = Math.abs(direction[0]);
@@ -52,6 +54,68 @@ public class Test {
             kreis.move(direction);
         }
     }
+
+    private static void kreisBewegung(Kreis kreis) throws InterruptedException {
+        boolean isNight = false;
+        int[] middle = new int[] {(int) (leinwand.getLeinwandBreite() * 0.5), (int) (leinwand.getLeinwandHoehe()* 0.5)};
+
+        double angleInDeg = 180;
+        int radius = (int) sqrt(Math.pow((kreis.positionX - middle[0]), 2.0) + Math.pow((kreis.positionY - middle[1]), 2));
+
+        Rechteck bgRectangle = new Rechteck(-10, -10, 1000, 1000, "weiß");
+
+        Kreis abgebissen = new Kreis(0, 450, 60, "schwarz");
+
+        while (true) {
+            leinwand.zeichne(trunk);
+            leinwand.zeichne(leaves);
+            leinwand.zeichne(kreis);
+            if (isNight) leinwand.zeichne(abgebissen);
+
+            angleInDeg += 1;
+            int[] cords = getNewCordsFromAngle(Math.toRadians(angleInDeg), radius);
+            int xMove = cords[0] - kreis.positionX;
+            int yMove = cords[1] - kreis.positionY;
+
+            int[] direction = new int[]{xMove, yMove};
+            kreis.move(direction);
+
+            int xMoveAbgebissen = kreis.positionX - abgebissen.positionX - 30;
+            int yMoveAbgebissen = kreis.positionY - abgebissen.positionY;
+            int[] directionAbgebissen = new int[]{xMoveAbgebissen, yMoveAbgebissen};
+            abgebissen.move(directionAbgebissen);
+
+            if (Objects.equals(checkForBoundary(kreis), "right") && !isNight) {
+                bgRectangle.farbe = "schwarz";
+                kreis.farbe = "weiss";
+                isNight = true;
+                angleInDeg = 180;
+                leinwand.zeichne(bgRectangle);
+            } else if (Objects.equals(checkForBoundary(kreis), "right") && isNight) {
+                bgRectangle.farbe = "weiss";
+                kreis.farbe = "gelb";
+                isNight = false;
+                angleInDeg = 180;
+                leinwand.zeichne(bgRectangle);
+            }
+            leinwand.warte(10);
+        }
+
+    }
+
+    private static int[] getNewCordsFromAngle(double angle, int radius) {
+        int[] middle = new int[] {(int) (leinwand.getLeinwandBreite() * 0.5), (int) (leinwand.getLeinwandHoehe()* 0.5)};
+
+        double sin = Math.sin(angle);
+        double yCoord = sin * radius + middle[1];
+
+        double cos = Math.cos(angle);
+        double xCoord = cos * radius + middle[0];
+
+        return new int[] {(int) xCoord, (int) yCoord};
+    }
+
+
     private static String checkForBoundary(Kreis kreis) {
         int boundaryX = leinwand.getLeinwandBreite();
         int boundaryY = leinwand.getLeinwandHoehe();
