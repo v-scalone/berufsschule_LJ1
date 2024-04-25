@@ -1,21 +1,19 @@
 package figuren;
+
 import ack.shapes.Leinwand;
 
 import java.util.*;
-import java.util.List;
 
 import static java.lang.Math.sqrt;
 
 public class Main {
-    static Map<Integer, Form> formenListe =  new HashMap<Integer, Form>();
-    static Map<Integer, List<Form>> dreieckListe = new HashMap();
+    static Map<Integer, Form> formenListe = new HashMap<>();
+    static Map<Integer, List<Form>> dreieckListe = new HashMap<>();
     public static Integer objectIndexer = 0;
 
 
-
-
     static Leinwand leinwand = new Leinwand("Leinwand", 600, 900);
-    static int[] middle = new int[] {(int) (leinwand.getLeinwandBreite() * 0.5), (int) (leinwand.getLeinwandHoehe()* 0.5)};
+    static int[] middle = new int[]{(int) (leinwand.getLeinwandBreite() * 0.5), (int) (leinwand.getLeinwandHoehe() * 0.5)};
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -30,7 +28,7 @@ public class Main {
     }
 
     public static void animate(Kreis kreis) throws InterruptedException {
-        int[] direction = new int[] {6, 8};
+        int[] direction = new int[]{6, 8};
 
         while (true) {
             leinwand.zeichne(kreis);
@@ -69,7 +67,7 @@ public class Main {
             // increment angle and move sun / moon
             angleInDeg += 1;
             moveToPoint(kreis, getPointFromAngleAndRadius(Math.toRadians(angleInDeg), radius));
-            moveToPoint(abgebissen, new int[] {kreis.positionX - 40, kreis.positionY});
+            moveToPoint(abgebissen, new int[]{kreis.positionX - 40, kreis.positionY});
 
             // check if circle touches right border and switch between day or night; reset circle to left
             if (Objects.equals(checkForBoundary(kreis), "right") && isDay) {
@@ -89,7 +87,7 @@ public class Main {
 
     }
 
-    private static void moveToPoint (Kreis kreis, int[] point) {
+    private static void moveToPoint(Kreis kreis, int[] point) {
         int xMove = point[0] - kreis.positionX;
         int yMove = point[1] - kreis.positionY;
 
@@ -97,7 +95,7 @@ public class Main {
     }
 
     private static int[] getPointFromAngleAndRadius(double angle, int radius) {
-        int[] middle = new int[] {(int) (leinwand.getLeinwandBreite() * 0.5), (int) (leinwand.getLeinwandHoehe()* 0.5)};
+        int[] middle = new int[]{(int) (leinwand.getLeinwandBreite() * 0.5), (int) (leinwand.getLeinwandHoehe() * 0.5)};
 
         double sin = Math.sin(angle);
         double yCoordinate = sin * radius + middle[1];
@@ -105,7 +103,7 @@ public class Main {
         double cos = Math.cos(angle);
         double xCoordinate = cos * radius + middle[0];
 
-        return new int[] {(int) xCoordinate, (int) yCoordinate};
+        return new int[]{(int) xCoordinate, (int) yCoordinate};
     }
 
 
@@ -131,7 +129,7 @@ public class Main {
         return null;
     }
 
-    public static void drawRechteck(){
+    public static void drawRechteck() {
         System.out.println("What should your rechteck be?");
         System.out.print("[posx]: ");
         int posX = new Scanner(System.in).nextInt();
@@ -160,7 +158,7 @@ public class Main {
         leinwand.zeichne(rechteck);
     }
 
-    public static void drawKreis (){
+    public static void drawKreis() {
         System.out.println("What should your Kreis be?");
         System.out.print("[posx]: ");
         int posX = new Scanner(System.in).nextInt();
@@ -187,23 +185,23 @@ public class Main {
         leinwand.zeichne(kreis);
     }
 
-    public static void drawDreieck(){
+    public static void drawDreieck() {
         List<Form> dreieckLListe = new ArrayList<>();
-        for (int i = 0; i < 100; i++){
-            Form dreieckPart = new Rechteck(150 - i, 150 + i, 1+ i*2, 1, "rot");
+        for (int i = 0; i < 100; i++) {
+            Form dreieckPart = new Rechteck(150 - i, 150 + i, 1 + i * 2, 1, "rot");
             leinwand.zeichne(dreieckPart);
             dreieckLListe.add(dreieckPart);
         }
-        objectIndexer ++;
+        objectIndexer++;
         dreieckListe.put(objectIndexer, dreieckLListe);
     }
 
-    public static void addToMap(Form form){
+    public static void addToMap(Form form) {
         objectIndexer++;
         formenListe.put(objectIndexer, form);
     }
 
-    public static void deleteFromCanvas(){
+    public static void deleteFromCanvas() {
         System.out.println("Diese Formen existieren gerade: ");
         System.out.println(formenListe);
         int index = new Scanner(System.in).nextInt();
