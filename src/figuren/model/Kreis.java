@@ -1,10 +1,10 @@
-package figuren;
+package figuren.model;
 
 public class Kreis extends Form{
-    int positionX;
-    int positionY;
-    String farbe;
-    int radius;
+    public int positionX;
+    public int positionY;
+    public String farbe;
+    public int radius;
     public Kreis() {
         this(100,100,50,"gruen");
     }

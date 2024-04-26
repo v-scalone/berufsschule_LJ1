@@ -1,5 +1,7 @@
 package figuren;
 
+import figuren.model.*;
+
 import ack.shapes.Leinwand;
 
 import java.util.*;
